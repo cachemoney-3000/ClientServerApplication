@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="755.0" prefWidth="924.0" style="-fx-background-color: #1e2e3d;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.project2.MainController">
+   <children>
+      <VBox prefHeight="755.0" prefWidth="924.0">
+         <children>
+            <HBox prefHeight="58.0" prefWidth="924.0">
+               <children>
+                  <HBox prefHeight="52.0" prefWidth="894.0" style="-fx-background-color: #4b5864; -fx-background-radius: 15;">
+                     <children>
+                        <Text fx:id="showConnection" fill="#b0b0b0ca" strokeType="OUTSIDE" strokeWidth="0.0" text="No connection" wrappingWidth="799.064453125">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                        </Text>
+                        <Button fx:id="logout_button" mnemonicParsing="false" onAction="#logout" styleClass="clear2_button" stylesheets="@css/main.css" text="Logout">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                     <HBox.margin>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </HBox.margin>
+                  </HBox>
+               </children>
+            </HBox>
+            <TextArea fx:id="SQLCommands" prefHeight="242.0" prefWidth="924.0" promptText="Enter your SQL commands here" stylesheets="@css/main.css">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+               </VBox.margin>
+            </TextArea>
+            <HBox prefHeight="56.0" prefWidth="914.0">
+               <children>
+                  <Pane prefHeight="37.0" prefWidth="767.0" />
+                  <Button fx:id="clear_button" mnemonicParsing="false" onAction="#clearCommands" prefHeight="32.0" prefWidth="54.0" styleClass="clear_button" stylesheets="@css/main.css" text="Clear">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="execute_button" mnemonicParsing="false" onAction="#executeCommands" styleClass="execute_button" stylesheets="@css/main.css" text="Execute">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="5.0" right="5.0" />
+               </VBox.margin>
+            </HBox>
+            <VBox prefHeight="348.0" prefWidth="924.0" style="-fx-background-color: #486e92;">
+               <children>
+                  <TableView fx:id="table" prefHeight="298.0" prefWidth="949.0" stylesheets="@css/main.css">
+                    <columns>
+                      <TableColumn prefWidth="109.0" text="C1" />
+                      <TableColumn prefWidth="131.0" text="C2" />
+                    </columns>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </TableView>
+                  <HBox prefHeight="62.0" prefWidth="927.0">
+                     <children>
+                        <Pane prefHeight="68.0" prefWidth="801.0" />
+                        <Button fx:id="clearResults_button" mnemonicParsing="false" onAction="#clearResults" styleClass="clear_button" stylesheets="@css/main.css" text="Clear results">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</Pane>
