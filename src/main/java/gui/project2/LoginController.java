@@ -58,7 +58,6 @@ public class LoginController implements Initializable {
                 Application app = new Application();
                 app.changeScene("main-view.fxml");
                  */
-
                 //String connectQuery = "select * from bikes";
 
                 try {
@@ -76,7 +75,7 @@ public class LoginController implements Initializable {
 
                         String showText = "Connected to jdbc:mysql://localhost:3306/project2";
                         mc.setText(showText);
-                        mc.setStatement(statement);
+                        mc.setStatement(statement, fileProperty);
 
 
                         Stage stage = new Stage();
@@ -92,7 +91,6 @@ public class LoginController implements Initializable {
                     while (output.next()) {
                         System.out.println(output.getString("bikename"));
                     }
-
                      */
                 } catch (SQLException e) {
                     e.printStackTrace();
