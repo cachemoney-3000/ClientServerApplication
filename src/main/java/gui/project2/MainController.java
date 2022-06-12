@@ -1,31 +1,26 @@
 package gui.project2;
 
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
+import javafx.util.Callback;
 
-import java.io.IOException;
 import java.net.URL;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
     public static Statement statement;
     private static String propertyType;
+    private ObservableList<ObservableList> data;
 
 
     @FXML
@@ -47,7 +42,7 @@ public class MainController implements Initializable {
     private Text showConnection;
 
     @FXML
-    private TableView<ObservableList<String>> table;
+    private TableView table;
 
     @FXML
     void clearCommands(ActionEvent event) {
@@ -58,6 +53,7 @@ public class MainController implements Initializable {
     void clearResults(ActionEvent event) {
 
     }
+
 
     @FXML
     void executeCommands(ActionEvent event) {
@@ -70,42 +66,58 @@ public class MainController implements Initializable {
         ResultSet output;
         ResultSetMetaData rsmd;
 
-
         try {
             // Client server can only do SELECT operations
             if (Objects.equals(propertyType, "client.properties")){
                 if (Objects.equals(firstWord, "select")) {
                     output = statement.executeQuery(connectQuery);
 
+                    // PRINT HEADER FOR THE TABLE
                     rsmd = output.getMetaData();
                     int columnsNumber = rsmd.getColumnCount();
+                    // CLEAR ITEMS IN THE TABLE ** might move to another spot
                     table.getColumns().clear();
-
-
-                    for (int i = 1; i <= columnsNumber; i++) {
-
+                    for (int i = 0; i < columnsNumber; i++) {
                         final int finalIdx = i;
-                        TableColumn<ObservableList<String>, String> column = new TableColumn<>(
-                                rsmd.getColumnName(i).toUpperCase());
 
-                        column.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
-                        column.setResizable(false);
+                        TableColumn col = new TableColumn(rsmd.getColumnName(i + 1).toUpperCase());
+                        col.setCellValueFactory((Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>) param -> new SimpleStringProperty(param.getValue().get(finalIdx).toString()));
 
-                        column.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().get(finalIdx)));
-                        table.getColumns().add(column);
+                        col.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
+                        col.setResizable(false);
+
+                        table.getColumns().addAll(col);
                     }
 
 
-
+                    data = FXCollections.observableArrayList();
                     while (output.next()) {
-                        for (int i = 1; i <= columnsNumber; i++) {
-                            if (i > 1) System.out.print(",  ");
-                            String columnValue = output.getString(i);
-                            System.out.print(columnValue + " " + rsmd.getColumnName(i));
+                        ObservableList<String> row = FXCollections.observableArrayList();
+                        for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                            row.add(output.getString(i));
                         }
-                        System.out.println("");
+                        System.out.println("Row [1] added " + row);
+                        data.add(row);
                     }
+                    table.setItems(data);
+                    /*
+                    // PRINT THE ROWS TO THE TABLE
+                    while (output.next()) {
+                        ObservableList<String> row = FXCollections.observableArrayList();
+
+                        for (int i = 1; i <= columnsNumber; i++) {
+                            String columnValue = output.getString(i);
+                            row.add(columnValue);
+                        }
+                        System.out.println("Row [1] added " + row);
+                        data.add(row);
+                    }
+                    table.setItems(data);
+
+                     */
                 }
+
+
                 else {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Command not allowed!");
