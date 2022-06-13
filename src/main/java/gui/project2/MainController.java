@@ -103,6 +103,8 @@ public class MainController implements Initializable {
                 rootServer(firstWord, connectQuery);
 
 
+
+
         } catch (SQLException e) {
             // Show the error command and update the command indicator
             command.setText("Command was unsuccessful");
@@ -156,6 +158,9 @@ public class MainController implements Initializable {
             // Update the command indicator
             command.setText("Command was executed successfully");
             glow.setStyle("-fx-background-color:  #4c644b; -fx-background-radius: 10");
+
+            // Update the logs
+            updateLogs(false);
         }
 
         else {
@@ -225,5 +230,6 @@ public class MainController implements Initializable {
         if (MainController.operationsDB != null) {
             MainController.secondStatement = MainController.operationsDB.createStatement();
         }
+
     }
 }

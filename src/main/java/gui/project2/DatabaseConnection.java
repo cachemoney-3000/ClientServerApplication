@@ -10,35 +10,37 @@ package gui.project2;
 
 import javafx.scene.control.Alert;
 
-import java.sql.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Properties;
 
 public class DatabaseConnection {
-    public Connection databaseLink;
-
     // Method that will try to connect to a server, returns the data type "Connection"
-    public Connection getConnection(String user, String pass, String fileProperty) {
-        String databaseName = "project2";
+    public Connection getConnection(String inputUser, String inputPass, String fileProperty) throws IOException {
+        DatabaseConnection connect = new DatabaseConnection();
+        Utility utils = new Utility();
+        Connection databaseLink = null;
+
+        String[] accountInfo = utils.readProperties(fileProperty);
+        String databaseName = accountInfo[2];
         String url = "jdbc:mysql://localhost:3306/" + databaseName;
 
-        boolean connection = false;
-        DatabaseConnection dc = new DatabaseConnection();
+        // Validate the input username and password using the properties file
+        boolean connected = connect.validateLogin(inputUser, inputPass, accountInfo);
 
-        // If the user choose to connect to the root server, validate the user and password
-        if (Objects.equals(fileProperty, "root.properties"))
-            connection = dc.connectToRoot(user, pass);
-
-        // If the user choose to connect to the client server, validate the user and password
-        else if (Objects.equals(fileProperty, "client.properties"))
-            connection = dc.connectToClient(user, pass);
-
-        // If the connection is valid
-        if (connection) {
+        // If the connected is valid
+        if (connected) {
             // Try to connect to the database using the username, password and url provided by the user
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
-                databaseLink = DriverManager.getConnection(url, user, pass);
+                databaseLink = DriverManager.getConnection(url, inputUser, inputPass);
             } catch (Exception e) {
+                // Catch all the exceptions
                 e.printStackTrace();
             }
         }
@@ -54,9 +56,10 @@ public class DatabaseConnection {
         return databaseLink;
     }
 
-    public Connection connectOperationsLog(String user, String pass) {
-        String databaseOperationsLog = "operationslog";
-        String url = "jdbc:mysql://localhost:3306/" + databaseOperationsLog;
+    // Using the root account, connect to the operations log to log the number of queries and updates
+    public Connection connectOperationsLog(String user, String pass, String database) {
+        Connection databaseLink = null;
+        String url = "jdbc:mysql://localhost:3306/" + database;
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -68,13 +71,11 @@ public class DatabaseConnection {
         return databaseLink;
     }
 
-    // Validate the username and password for root server
-    public boolean connectToRoot(String user, String pass) {
-        return Objects.equals(user, "root") && Objects.equals(pass, "Owaako29!");
-    }
+    // Validate the username and password
+    public boolean validateLogin(String inputUser, String inputPass, String[] accountInfo) {
+        String user = accountInfo[0];
+        String pass = accountInfo[1];
 
-    // Validate the username and password for client server
-    public boolean connectToClient(String user, String pass) {
-        return Objects.equals(user, "client") && Objects.equals(pass, "client");
+        return Objects.equals(inputUser, user) && Objects.equals(inputPass, pass);
     }
 }

@@ -65,17 +65,19 @@ public class LoginController implements Initializable {
         else {
             // Connect to the database
             DatabaseConnection connect = new DatabaseConnection();
+            Utility utils = new Utility();
             // The getConnection method will check if the username and password were valid
             connectDB = connect.getConnection(user, pass, fileProperty);
 
             // If the user was able to connect to the database
             if(connectDB != null) {
                 try {
-                    // Only execute this command if the user picked root.properties
-                    if (Objects.equals(fileProperty, "root.properties")){
-                        // Connect to the operations log database
-                        operationsDB = connect.connectOperationsLog(user, pass);
-                    }
+                    // Connect to the operations log database using the root account
+                    String[] accountInfo = utils.readProperties("operations.properties");
+                    String actualUser = accountInfo[0];
+                    String actualPass = accountInfo[1];
+                    String database = accountInfo[2];
+                    operationsDB = connect.connectOperationsLog(actualUser, actualPass, database);
 
                     // Get the database ready
                     Statement statement = connectDB.createStatement();
@@ -119,10 +121,7 @@ public class LoginController implements Initializable {
     public void logout() throws SQLException {
         // Close the database
         connectDB.close();
-
-        // Close the operationslog database
-        if(operationsDB != null)
-            operationsDB.close();
+        operationsDB.close();
     }
 
     // Show a warning based on what text fields is empty
