@@ -1,42 +1,39 @@
 package gui.project2;
 
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import javafx.util.Callback;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
-    public static Statement statement;
-    private static String propertyType;
-    private ObservableList<ObservableList> data;
-
+    @FXML
+    private TextArea commandArea;
 
     @FXML
-    private TextArea SQLCommands;
-
-    @FXML
-    private Button clearResults_button;
+    private Button clearResults;
 
     @FXML
     private Button clear_button;
 
     @FXML
-    private Button execute_button;
+    private HBox glow;
 
     @FXML
-    private Button logout_button;
+    private Text command;
 
     @FXML
     private Text showConnection;
@@ -44,127 +41,145 @@ public class MainController implements Initializable {
     @FXML
     private TableView table;
 
+    public static  Statement statement;
+
+    private static String propertyType;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+    }
+
     @FXML
     void clearCommands(ActionEvent event) {
-        SQLCommands.clear();
+        // Clears the command text area
+        if (event.getSource().equals(clear_button))
+            commandArea.clear();
     }
 
     @FXML
     void clearResults(ActionEvent event) {
+        if (event.getSource().equals(clearResults)){
+            // Clear all the items on the table
+            table.getColumns().clear();
+            table.getItems().clear();
+            // Update the command indicator
+            command.setText("Results cleared!");
+            glow.setStyle("-fx-background-color: #4b5864; -fx-background-radius: 10");
+        }
 
     }
 
-
     @FXML
     void executeCommands(ActionEvent event) {
-        String connectQuery = SQLCommands.getText();
+        // Get the query command from the textfield
+        String connectQuery = commandArea.getText();
 
         // Get the first word in the string
         String[] arr = connectQuery.split(" ", 2);
         String firstWord = arr[0].toLowerCase();
 
-        ResultSet output;
-        ResultSetMetaData rsmd;
+        ExecuteCommand execute = new ExecuteCommand();
 
         try {
             // Client server can only do SELECT operations
-            if (Objects.equals(propertyType, "client.properties")){
-                if (Objects.equals(firstWord, "select")) {
-                    output = statement.executeQuery(connectQuery);
-
-                    // PRINT HEADER FOR THE TABLE
-                    rsmd = output.getMetaData();
-                    int columnsNumber = rsmd.getColumnCount();
-                    // CLEAR ITEMS IN THE TABLE ** might move to another spot
-                    table.getColumns().clear();
-                    for (int i = 0; i < columnsNumber; i++) {
-                        final int finalIdx = i;
-
-                        TableColumn col = new TableColumn(rsmd.getColumnName(i + 1).toUpperCase());
-                        col.setCellValueFactory((Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>) param -> new SimpleStringProperty(param.getValue().get(finalIdx).toString()));
-
-                        col.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
-                        col.setResizable(false);
-
-                        table.getColumns().addAll(col);
-                    }
-
-
-                    data = FXCollections.observableArrayList();
-                    while (output.next()) {
-                        ObservableList<String> row = FXCollections.observableArrayList();
-                        for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-                            row.add(output.getString(i));
-                        }
-                        System.out.println("Row [1] added " + row);
-                        data.add(row);
-                    }
-                    table.setItems(data);
-                    /*
-                    // PRINT THE ROWS TO THE TABLE
-                    while (output.next()) {
-                        ObservableList<String> row = FXCollections.observableArrayList();
-
-                        for (int i = 1; i <= columnsNumber; i++) {
-                            String columnValue = output.getString(i);
-                            row.add(columnValue);
-                        }
-                        System.out.println("Row [1] added " + row);
-                        data.add(row);
-                    }
-                    table.setItems(data);
-
-                     */
-                }
-
-
-                else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Command not allowed!");
-
-                    alert.setContentText(firstWord.toUpperCase() + " command not allowed to user \"client@localhost\"");
-                    alert.showAndWait();
-                }
-
-            }
+            if (Objects.equals(propertyType, "client.properties"))
+                clientServer(firstWord, connectQuery);
 
             // Root server can do SELECT and UPDATE operations
-            else if (Objects.equals(propertyType, "root.properties")) {
-                // SHOW QUERY
-                if (firstWord == "select") {
-                    output = statement.executeQuery(connectQuery);
-
-                    while (output.next()) {
-                        System.out.println(output.getString("bikename"));
-                    }
-                }
-
-                // UPDATE TABLE
-                else {
-                    int count = statement.executeUpdate(connectQuery);
-                    System.out.println(count + " records updated");
-                }
-            }
+            else if (Objects.equals(propertyType, "root.properties"))
+                rootServer(firstWord, connectQuery);
 
 
         } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Syntax not allowed!");
-
-            alert.setContentText(e.toString());
-            alert.showAndWait();
-            //e.printStackTrace();
+            // Show the error command and update the command indicator
+            command.setText("Command was unsuccessful");
+            glow.setStyle("-fx-background-color:  #644b4c; -fx-background-radius: 10");
+            execute.showAlert(e, true, "");
         }
     }
 
     @FXML
-    void logout(ActionEvent event) {
+    void logout(ActionEvent event) throws SQLException {
+        // Get the current stage
+        Stage stage = (Stage)((Node) event.getSource()).getScene().getWindow();
 
+        try {
+            // Hide the current stage
+            stage.hide();
+
+            // Get the login scene ready
+            FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("gui-view.fxml"));
+            Parent root = fxmlLoader.load();
+            LoginController lc = fxmlLoader.getController();
+
+            // Close the database connection
+            lc.logout();
+
+            // Go back to the login page
+            Stage newStage = new Stage();
+            newStage.setTitle("SQL Client-Server Application");
+            newStage.setResizable(false);
+            newStage.setScene(new Scene(root));
+            newStage.show();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    private void clientServer(String firstWord, String connectQuery) throws SQLException {
+        ObservableList<ObservableList> data;
+        ExecuteCommand execute = new ExecuteCommand();
 
+        // Check if the first word of the query is a "select" operation
+        if (Objects.equals(firstWord, "select")) {
+            // Execute the query
+            ResultSet output = statement.executeQuery(connectQuery);
+            ResultSetMetaData metaData = output.getMetaData();
+            data = execute.showQuery(output, metaData, table);
+
+            // Show it to the table
+            table.setItems(data);
+
+            // Update the command indicator
+            command.setText("Command was executed successfully");
+            glow.setStyle("-fx-background-color:  #4c644b; -fx-background-radius: 10");
+        }
+
+        else {
+            // Update the command indicator
+            command.setText("Command not allowed.");
+            glow.setStyle("-fx-background-color:  #644b4c; -fx-background-radius: 10");
+            execute.showAlert(null, false, firstWord);
+        }
+    }
+
+    private void rootServer(String firstWord, String connectQuery) throws SQLException {
+        ExecuteCommand execute = new ExecuteCommand();
+        ObservableList<ObservableList> data;
+
+        // Check if the first word of the query is a "select" operation
+        if ("select".equals(firstWord)) {
+            // Execute the query
+            ResultSet output = statement.executeQuery(connectQuery);
+            ResultSetMetaData metaData = output.getMetaData();
+            data = execute.showQuery(output, metaData, table);
+
+            // Show the query result to the table
+            table.setItems(data);
+
+            // Update the command indicator
+            command.setText("Command was executed successfully");
+            glow.setStyle("-fx-background-color:  #4c644b; -fx-background-radius: 10");
+        }
+
+        else {
+            // Execute the update query
+            int count = statement.executeUpdate(connectQuery);
+            // Update the command indicator
+            command.setText("Command executed successfully. There are " + count + " records updated");
+            glow.setStyle("-fx-background-color:  #4c644b; -fx-background-radius: 10");
+        }
     }
 
     public void setText(String text) {

@@ -41,7 +41,7 @@
                   </HBox>
                </children>
             </HBox>
-            <TextArea fx:id="SQLCommands" prefHeight="242.0" prefWidth="924.0" promptText="Enter your SQL commands here" stylesheets="@css/main.css">
+            <TextArea fx:id="commandArea" prefHeight="187.0" prefWidth="894.0" promptText="Enter your SQL commands here" stylesheets="@css/main.css">
                <font>
                   <Font size="14.0" />
                </font>
@@ -60,7 +60,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="execute_button" mnemonicParsing="false" onAction="#executeCommands" styleClass="execute_button" stylesheets="@css/main.css" text="Execute">
+                  <Button defaultButton="true" mnemonicParsing="false" onAction="#executeCommands" styleClass="execute_button" stylesheets="@css/main.css" text="Execute">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -73,28 +73,42 @@
                   <Insets bottom="10.0" left="5.0" right="5.0" />
                </VBox.margin>
             </HBox>
-            <VBox prefHeight="348.0" prefWidth="924.0" style="-fx-background-color: #486e92;">
+            <VBox prefHeight="403.0" prefWidth="924.0" style="-fx-background-color: #486e92;">
                <children>
-                  <TableView fx:id="table" prefHeight="298.0" prefWidth="949.0" stylesheets="@css/main.css">
+                  <TableView fx:id="table" prefHeight="387.0" prefWidth="914.0" stylesheets="@css/main.css">
                      <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </VBox.margin>
                   </TableView>
-                  <HBox prefHeight="62.0" prefWidth="927.0">
-                     <children>
-                        <Pane prefHeight="68.0" prefWidth="801.0" />
-                        <Button fx:id="clearResults_button" mnemonicParsing="false" onAction="#clearResults" styleClass="clear_button" stylesheets="@css/main.css" text="Clear results">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </HBox.margin>
-                        </Button>
-                     </children>
-                  </HBox>
                </children>
             </VBox>
+            <HBox prefHeight="62.0" prefWidth="927.0">
+               <children>
+                  <HBox fx:id="glow" prefHeight="25.0" prefWidth="801.0" style="-fx-background-color: #4b5864; -fx-background-radius: 10;">
+                     <children>
+                        <Text fx:id="command" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="761.064453125">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="15.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Text>
+                     </children>
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </HBox>
+                  <Button fx:id="clearResults" mnemonicParsing="false" onAction="#clearResults" prefHeight="30.0" prefWidth="142.0" styleClass="clear_button" stylesheets="@css/main.css" text="Clear results">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
          </children>
       </VBox>
    </children>
