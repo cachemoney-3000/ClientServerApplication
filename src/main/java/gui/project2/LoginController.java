@@ -1,3 +1,11 @@
+/*
+    Name: Joshua Samontanez
+    Course: CNT 4714 Summer 2022
+    Assignment title: Project 2 – A Two-tier Client-Server Application
+    Date: June 26, 2022
+    Class: C001
+*/
+
 package gui.project2;
 
 import javafx.collections.FXCollections;
@@ -31,6 +39,7 @@ public class LoginController implements Initializable {
     private TextField userTextField;
 
     private static Connection connectDB;
+    private static Connection operationsDB;
 
     ObservableList<String> list = FXCollections.observableArrayList("root.properties", "client.properties");
 
@@ -62,6 +71,12 @@ public class LoginController implements Initializable {
             // If the user was able to connect to the database
             if(connectDB != null) {
                 try {
+                    // Only execute this command if the user picked root.properties
+                    if (Objects.equals(fileProperty, "root.properties")){
+                        // Connect to the operations log database
+                        operationsDB = connect.connectOperationsLog(user, pass);
+                    }
+
                     // Get the database ready
                     Statement statement = connectDB.createStatement();
 
@@ -87,7 +102,7 @@ public class LoginController implements Initializable {
 
             String showText = "Connected to jdbc:mysql://localhost:3306/project2";
             mc.setText(showText);
-            mc.setStatement(statement, fileProperty);
+            mc.setStatement(statement, fileProperty, operationsDB);
 
             // Show the main landing page
             Stage newStage = new Stage();
@@ -96,7 +111,7 @@ public class LoginController implements Initializable {
             newStage.setScene(new Scene(root));
             newStage.show();
 
-        }catch (IOException e) {
+        }catch (IOException | SQLException e) {
             e.printStackTrace();
         }
     }
@@ -104,6 +119,10 @@ public class LoginController implements Initializable {
     public void logout() throws SQLException {
         // Close the database
         connectDB.close();
+
+        // Close the operationslog database
+        if(operationsDB != null)
+            operationsDB.close();
     }
 
     // Show a warning based on what text fields is empty

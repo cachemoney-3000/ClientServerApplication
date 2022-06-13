@@ -1,7 +1,14 @@
+/*
+    Name: Joshua Samontanez
+    Course: CNT 4714 Summer 2022
+    Assignment title: Project 2 – A Two-tier Client-Server Application
+    Date: June 26, 2022
+    Class: C001
+*/
+
 package gui.project2;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 

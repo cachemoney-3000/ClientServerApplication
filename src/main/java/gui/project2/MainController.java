@@ -1,3 +1,11 @@
+/*
+    Name: Joshua Samontanez
+    Course: CNT 4714 Summer 2022
+    Assignment title: Project 2 – A Two-tier Client-Server Application
+    Date: June 26, 2022
+    Class: C001
+*/
+
 package gui.project2;
 
 import javafx.collections.ObservableList;
@@ -27,7 +35,7 @@ public class MainController implements Initializable {
     private Button clearResults;
 
     @FXML
-    private Button clear_button;
+    private Button clearButton;
 
     @FXML
     private HBox glow;
@@ -45,6 +53,10 @@ public class MainController implements Initializable {
 
     private static String propertyType;
 
+    private static Connection operationsDB;
+
+    private static Statement secondStatement;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -53,7 +65,7 @@ public class MainController implements Initializable {
     @FXML
     void clearCommands(ActionEvent event) {
         // Clears the command text area
-        if (event.getSource().equals(clear_button))
+        if (event.getSource().equals(clearButton))
             commandArea.clear();
     }
 
@@ -64,7 +76,7 @@ public class MainController implements Initializable {
             table.getColumns().clear();
             table.getItems().clear();
             // Update the command indicator
-            command.setText("Results cleared!");
+            command.setText("Results cleared");
             glow.setStyle("-fx-background-color: #4b5864; -fx-background-radius: 10");
         }
 
@@ -154,6 +166,19 @@ public class MainController implements Initializable {
         }
     }
 
+    // If changeType = false, update the num_queries. If changeType = true, update the num_updates
+    private void updateLogs(boolean changeType) throws SQLException {
+        String commandQuery = "update operationscount set num_queries = num_queries + 1;";
+        String commandUpdate = "update operationscount set num_updates = num_updates + 1;";
+
+        if (changeType) {
+            secondStatement.executeUpdate(commandUpdate);
+        }
+        else {
+            secondStatement.executeUpdate(commandQuery);
+        }
+    }
+
     private void rootServer(String firstWord, String connectQuery) throws SQLException {
         ExecuteCommand execute = new ExecuteCommand();
         ObservableList<ObservableList> data;
@@ -171,14 +196,20 @@ public class MainController implements Initializable {
             // Update the command indicator
             command.setText("Command was executed successfully");
             glow.setStyle("-fx-background-color:  #4c644b; -fx-background-radius: 10");
+
+            // Update the logs
+            updateLogs(false);
         }
 
         else {
             // Execute the update query
             int count = statement.executeUpdate(connectQuery);
             // Update the command indicator
-            command.setText("Command executed successfully. There are " + count + " records updated");
+            command.setText("Command executed successfully. There are " + count + " record(s) updated");
             glow.setStyle("-fx-background-color:  #4c644b; -fx-background-radius: 10");
+
+            // Update the logs
+            updateLogs(true);
         }
     }
 
@@ -186,8 +217,13 @@ public class MainController implements Initializable {
         showConnection.setText(text);
     }
 
-    public void setStatement (Statement statement, String propertyType) {
-        this.statement = statement;
-        this.propertyType = propertyType;
+    public void setStatement (Statement statement, String propertyType, Connection operationsDB) throws SQLException {
+        MainController.statement = statement;
+        MainController.propertyType = propertyType;
+        MainController.operationsDB = operationsDB;
+
+        if (MainController.operationsDB != null) {
+            MainController.secondStatement = MainController.operationsDB.createStatement();
+        }
     }
 }
