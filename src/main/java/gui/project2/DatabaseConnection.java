@@ -10,14 +10,10 @@ package gui.project2;
 
 import javafx.scene.control.Alert;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.Properties;
 
 public class DatabaseConnection {
     // Method that will try to connect to a server, returns the data type "Connection"

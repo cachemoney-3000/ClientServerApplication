@@ -49,13 +49,13 @@ public class MainController implements Initializable {
     @FXML
     private TableView table;
 
-    public static  Statement statement;
+    private Statement statement;
 
-    private static String propertyType;
+    private String propertyType;
 
-    private static Connection operationsDB;
+    private Connection operationsDB;
 
-    private static Statement secondStatement;
+    private Statement secondStatement;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -123,7 +123,7 @@ public class MainController implements Initializable {
             stage.hide();
 
             // Get the login scene ready
-            FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("gui-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MainLauncher.class.getResource("gui-view.fxml"));
             Parent root = fxmlLoader.load();
             LoginController lc = fxmlLoader.getController();
 
@@ -223,12 +223,12 @@ public class MainController implements Initializable {
     }
 
     public void setStatement (Statement statement, String propertyType, Connection operationsDB) throws SQLException {
-        MainController.statement = statement;
-        MainController.propertyType = propertyType;
-        MainController.operationsDB = operationsDB;
+        this.statement = statement;
+        this.propertyType = propertyType;
+        this.operationsDB = operationsDB;
 
-        if (MainController.operationsDB != null) {
-            MainController.secondStatement = MainController.operationsDB.createStatement();
+        if (this.operationsDB != null) {
+            this.secondStatement = MainController.this.operationsDB.createStatement();
         }
 
     }

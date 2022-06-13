@@ -39,9 +39,10 @@ public class LoginController implements Initializable {
     private TextField userTextField;
 
     private static Connection connectDB;
+
     private static Connection operationsDB;
 
-    ObservableList<String> list = FXCollections.observableArrayList("root.properties", "client.properties");
+    private final ObservableList<String> list = FXCollections.observableArrayList("root.properties", "client.properties");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -97,7 +98,7 @@ public class LoginController implements Initializable {
             currentStage.hide();
 
             // Get the next scene ready
-            FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("main-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MainLauncher.class.getResource("main-view.fxml"));
             Parent root = fxmlLoader.load();
 
             MainController mc = fxmlLoader.getController();
