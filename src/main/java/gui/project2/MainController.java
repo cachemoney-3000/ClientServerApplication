@@ -165,7 +165,7 @@ public class MainController implements Initializable {
 
         else {
             // Update the command indicator
-            command.setText("Command not allowed.");
+            command.setText("Command not allowed");
             glow.setStyle("-fx-background-color:  #644b4c; -fx-background-radius: 10");
             execute.showAlert(null, false, firstWord);
         }

@@ -28,9 +28,10 @@ public class Utility {
         // Extract the information from the property file and return
         String user = prop.getProperty("user");
         String pass = prop.getProperty("pass");
-        String database = prop.getProperty("database");
+        String url = prop.getProperty("url");
+        String driver = prop.getProperty("driver");
 
-        return new String[]{user, pass, database};
+        return new String[]{user, pass, url, driver};
     }
 
     private static Properties loadProperties(String fileName) {

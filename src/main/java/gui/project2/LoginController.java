@@ -74,11 +74,9 @@ public class LoginController implements Initializable {
             if(connectDB != null) {
                 try {
                     // Connect to the operations log database using the root account
-                    String[] accountInfo = utils.readProperties("operations.properties");
-                    String actualUser = accountInfo[0];
-                    String actualPass = accountInfo[1];
-                    String database = accountInfo[2];
-                    operationsDB = connect.connectOperationsLog(actualUser, actualPass, database);
+                    String[] properties = utils.readProperties("operations.properties");
+
+                    operationsDB = connect.connectOperationsLog(properties);
 
                     // Get the database ready
                     Statement statement = connectDB.createStatement();
