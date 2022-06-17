@@ -50,7 +50,7 @@ public class LoginController implements Initializable {
     }
 
     @FXML
-    void connectButton(ActionEvent event) throws IOException {
+    void connectButton(ActionEvent event) {
         // Get the current stage
         Stage currentStage = (Stage)((Node) event.getSource()).getScene().getWindow();
 
@@ -85,7 +85,7 @@ public class LoginController implements Initializable {
                     changeScene(currentStage, statement, fileProperty);
                 } catch (SQLException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error was encountered!");
+                    alert.setTitle("Encountered an error");
                     alert.setContentText(e.toString());
                     alert.showAndWait();
                 }
@@ -117,7 +117,7 @@ public class LoginController implements Initializable {
 
         }catch (IOException | SQLException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error was encountered!");
+            alert.setTitle("Encountered an error");
             alert.setContentText(e.toString());
             alert.showAndWait();
         }

@@ -8,6 +8,8 @@
 
 package gui.project2;
 
+import javafx.scene.control.Alert;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -40,7 +42,10 @@ public class Utility {
         try (FileInputStream inputStream = new FileInputStream(fileName)){
             prop.load(inputStream);
         } catch(IOException e) {
-            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Encountered an error");
+            alert.setContentText(e.toString());
+            alert.showAndWait();
         }
 
         return prop;
