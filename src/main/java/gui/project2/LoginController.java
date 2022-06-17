@@ -84,7 +84,10 @@ public class LoginController implements Initializable {
                     // Then change the scene from login page to the main page
                     changeScene(currentStage, statement, fileProperty);
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error was encountered!");
+                    alert.setContentText(e.toString());
+                    alert.showAndWait();
                 }
             }
         }
@@ -113,7 +116,10 @@ public class LoginController implements Initializable {
             newStage.show();
 
         }catch (IOException | SQLException e) {
-            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error was encountered!");
+            alert.setContentText(e.toString());
+            alert.showAndWait();
         }
     }
 
